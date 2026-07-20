@@ -10,6 +10,10 @@ namespace GoldenCrown.DataBase
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Account> Accounts { get; set; }
 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var userEntity = modelBuilder.Entity<User>()
@@ -39,11 +43,12 @@ namespace GoldenCrown.DataBase
                 .IsRequired();
             accountEntity.Property(x => x.Balance)
                 .HasColumnName("balance")
+                .HasPrecision(18,2)
                 .IsRequired();
             accountEntity.HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Account>(x=>x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             var sessionEntity = modelBuilder.Entity<Session>()
                 .ToTable("session");
@@ -60,7 +65,7 @@ namespace GoldenCrown.DataBase
             sessionEntity.HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Session>(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             var transactionEntity = modelBuilder.Entity<Transaction>()
                 .ToTable("transaction");
@@ -77,14 +82,18 @@ namespace GoldenCrown.DataBase
             transactionEntity.Property(x => x.CreatedAt)
                 .HasColumnName("created_at")
                 .IsRequired();
+            transactionEntity.Property(x=>x.Amount)
+                .HasColumnName("amount")
+                .HasPrecision(18,2)
+                .IsRequired();
             transactionEntity.HasOne<User>()
                 .WithMany()
                 .HasForeignKey(x=>x.SenderAccountId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             transactionEntity.HasOne<User>()
                 .WithMany()
                 .HasForeignKey(x => x.ReceiverAccountId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
