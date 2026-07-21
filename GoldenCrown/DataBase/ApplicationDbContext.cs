@@ -31,7 +31,20 @@ namespace GoldenCrown.DataBase
             userEntity.Property(x=>x.Password)
                 .HasColumnName("password")
                 .IsRequired();
-
+            userEntity.HasData(
+                new User
+                {
+                    Id = 1, Login = "admin", Name = "Administrator", Password = "admin"
+                },
+                new User
+                {
+                    Id = 2, Login = "user1", Name = "User1", Password = "user1"
+                },
+                new User
+                {
+                    Id = 3, Login = "user2", Name = "User2", Password = "user2"
+                }
+            );
             var accountEntity = modelBuilder.Entity<Account>()
                 .ToTable("account");
             accountEntity.HasKey(x => x.Id);

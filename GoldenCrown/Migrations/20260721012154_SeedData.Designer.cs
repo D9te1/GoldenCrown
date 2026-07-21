@@ -4,6 +4,7 @@ using GoldenCrown.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoldenCrown.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260721012154_SeedData")]
+    partial class SeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,21 +142,21 @@ namespace GoldenCrown.Migrations
                         {
                             Id = 1,
                             Login = "admin",
-                            Name = "Administrator",
+                            Name = "admin",
                             Password = "admin"
                         },
                         new
                         {
                             Id = 2,
                             Login = "user1",
-                            Name = "User1",
+                            Name = "user1",
                             Password = "user1"
                         },
                         new
                         {
                             Id = 3,
                             Login = "user2",
-                            Name = "User2",
+                            Name = "user2",
                             Password = "user2"
                         });
                 });
