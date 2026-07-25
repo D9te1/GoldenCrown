@@ -1,4 +1,5 @@
 using GoldenCrown.DataBase;
+using GoldenCrown.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoldenCrown
@@ -12,6 +13,10 @@ namespace GoldenCrown
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
+
             builder.Services.AddDbContext<ApplicationDbContext>(options=>
                 options.UseSqlServer(connectionString));
             builder.Services.AddControllers();
