@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace GoldenCrown.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class First : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,8 +51,7 @@ namespace GoldenCrown.Migrations
                 name: "session",
                 columns: table => new
                 {
-                    userId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    userId = table.Column<int>(type: "int", nullable: false),
                     token = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     expires_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -88,6 +89,16 @@ namespace GoldenCrown.Migrations
                         column: x => x.sender_account_id,
                         principalTable: "users",
                         principalColumn: "id");
+                });
+
+            migrationBuilder.InsertData(
+                table: "users",
+                columns: new[] { "id", "login", "name", "password" },
+                values: new object[,]
+                {
+                    { 1, "admin", "Administrator", "admin" },
+                    { 2, "user1", "User1", "user1" },
+                    { 3, "user2", "User2", "user2" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -51,11 +51,8 @@ namespace GoldenCrown.Migrations
             modelBuilder.Entity("GoldenCrown.Models.Session", b =>
                 {
                     b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("userId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2")

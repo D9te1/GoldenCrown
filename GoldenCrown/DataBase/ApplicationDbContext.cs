@@ -68,7 +68,7 @@ namespace GoldenCrown.DataBase
             sessionEntity.HasKey(x => x.UserId);
             sessionEntity.Property(x => x.UserId)
                 .HasColumnName("userId")
-                .UseIdentityColumn();
+                .IsRequired();
             sessionEntity.Property(x => x.Token)
                 .HasColumnName("token")
                 .IsRequired();

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoldenCrown.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260721012154_SeedData")]
-    partial class SeedData
+    [Migration("20260730144459_First")]
+    partial class First
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,11 +54,8 @@ namespace GoldenCrown.Migrations
             modelBuilder.Entity("GoldenCrown.Models.Session", b =>
                 {
                     b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("userId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2")
@@ -142,21 +139,21 @@ namespace GoldenCrown.Migrations
                         {
                             Id = 1,
                             Login = "admin",
-                            Name = "admin",
+                            Name = "Administrator",
                             Password = "admin"
                         },
                         new
                         {
                             Id = 2,
                             Login = "user1",
-                            Name = "user1",
+                            Name = "User1",
                             Password = "user1"
                         },
                         new
                         {
                             Id = 3,
                             Login = "user2",
-                            Name = "user2",
+                            Name = "User2",
                             Password = "user2"
                         });
                 });
