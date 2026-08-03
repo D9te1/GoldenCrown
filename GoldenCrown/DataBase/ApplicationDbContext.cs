@@ -1,5 +1,6 @@
 ﻿using GoldenCrown.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Reflection.Metadata;
 namespace GoldenCrown.DataBase
 {
@@ -63,6 +64,9 @@ namespace GoldenCrown.DataBase
                 .HasForeignKey<Account>(x=>x.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            SeedAccountData(accountEntity);
+
+            
             var sessionEntity = modelBuilder.Entity<Session>()
                 .ToTable("session");
             sessionEntity.HasKey(x => x.UserId);
@@ -80,6 +84,7 @@ namespace GoldenCrown.DataBase
                 .HasForeignKey<Session>(x => x.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+           
             var transactionEntity = modelBuilder.Entity<Transaction>()
                 .ToTable("transaction");
             transactionEntity.HasKey(x=>x.Id);
@@ -99,14 +104,32 @@ namespace GoldenCrown.DataBase
                 .HasColumnName("amount")
                 .HasPrecision(18,2)
                 .IsRequired();
-            transactionEntity.HasOne<User>()
+            transactionEntity.HasOne<Account>()
                 .WithMany()
                 .HasForeignKey(x=>x.SenderAccountId)
                 .OnDelete(DeleteBehavior.NoAction);
-            transactionEntity.HasOne<User>()
+            transactionEntity.HasOne<Account>()
                 .WithMany()
                 .HasForeignKey(x => x.ReceiverAccountId)
                 .OnDelete(DeleteBehavior.NoAction);
+        }
+
+        private void SeedAccountData(EntityTypeBuilder<Account> accountEntity)
+        {
+            accountEntity.HasData(
+                new Account
+                {
+                    Id = 1,
+                    UserId = 1,
+                    Balance = 1000,
+                },
+                new Account
+                {
+                    Id = 2,
+                    UserId = 2,
+                    Balance = 500,
+                }
+            );
         }
     }
 }
