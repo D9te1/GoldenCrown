@@ -1,4 +1,5 @@
 ﻿using GoldenCrown.DataBase;
+using GoldenCrown.DTOs.Finance;
 using GoldenCrown.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,6 +71,69 @@ namespace GoldenCrown.Services
             _dbcontext.Transactions.Add(transaction);
             await _dbcontext.SaveChangesAsync();
             return Result.Success();
+        }
+
+        public async Task<Result<List<TransactionHistoryResponse>>> GetTransactionHistoryAsync(string token,
+            DateTime? dateFrom, DateTime? dateTo, int skip, int take)
+        {
+            if(dateFrom!=null && dateTo!=null && dateFrom > dateTo)
+            {
+                return Result<List<TransactionHistoryResponse>>.Failure("Неккоректный диапозон дат");
+            }
+            var session = await _dbcontext.Sessions.FirstOrDefaultAsync(s => s.Token == token);
+            if (session == null)
+            {
+                return Result<List<TransactionHistoryResponse>>.Failure("Пользователь не авторизован");
+            }
+            
+            var account = await _dbcontext.Accounts.FirstOrDefaultAsync(a => a.UserId == session.UserId);
+            var transactions = _dbcontext.Transactions.Where(x => x.SenderAccountId == account!.Id
+            || x.ReceiverAccountId == account.Id);
+
+            if(dateFrom!=null)
+            {
+                transactions = transactions.Where(x => x.CreatedAt >= dateFrom.Value);
+            }
+            if (dateTo != null)
+            {
+                transactions = transactions.Where(x => x.CreatedAt >= dateTo.Value);
+            }
+            transactions = transactions.Skip(skip).Take(take);
+
+            var dbTransactions = await transactions.ToListAsync();
+
+            var result = new List<TransactionHistoryResponse>();
+            var allSenders = transactions.Select(x => x.SenderAccountId);
+            var allRecievers = transactions.Select(x => x.ReceiverAccountId);
+            var allAccounts = allSenders.ToHashSet();
+            foreach(var receiver  in allRecievers)
+            {
+                allAccounts.Add(receiver);
+            }
+
+            var names = await _dbcontext.Accounts.Where(x => allAccounts.Contains(x.Id))
+                .Join(_dbcontext.Users,
+                acc => acc.UserId,
+                u => u.Id,
+                (acc, u) => new
+                {
+                    Name = u.Name,
+                    AccId = acc.Id,
+                }).ToDictionaryAsync(x=>x.AccId);
+
+            foreach (var transaction in transactions)
+            {
+                var senderName = names[transaction.SenderAccountId].Name;
+                var receiverName = names[transaction.ReceiverAccountId].Name;
+                result.Add(new TransactionHistoryResponse
+                {
+                    SenderName = senderName,
+                    ReceiverName = receiverName,
+                    Amount = transaction.Amount,
+                    Date = transaction.CreatedAt
+                });
+            }
+            return result;
         }
     }
 }
