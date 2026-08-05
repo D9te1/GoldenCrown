@@ -1,6 +1,9 @@
 using GoldenCrown.DataBase;
+using GoldenCrown.Middlewares;
 using GoldenCrown.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+
 
 namespace GoldenCrown
 {
@@ -22,7 +25,31 @@ namespace GoldenCrown
                 options.UseSqlServer(connectionString));
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("ApiKey",
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+            Description = "Please enter into field your api token",
+            Name = "Authorization",
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+            });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "ApiKey"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+            });
 
             var app = builder.Build();
 
@@ -35,7 +62,7 @@ namespace GoldenCrown
             //dsvdgs
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseMiddleware<AuthorizationMiddleware>();
 
 
             app.MapControllers();

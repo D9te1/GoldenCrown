@@ -5,9 +5,6 @@ namespace GoldenCrown.DTOs.Finance
 {
     public class TransactionHistoryRequest
     {
-        [FromQuery]
-        [Required(ErrorMessage = "Обязательное поле")]
-        public string Token { get; set; }
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
         [Range(1,int.MaxValue, ErrorMessage = "Limit больше 0")]
