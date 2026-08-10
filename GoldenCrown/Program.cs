@@ -1,3 +1,4 @@
+using GoldenCrown.BackgriundService;
 using GoldenCrown.DataBase;
 using GoldenCrown.Middlewares;
 using GoldenCrown.Services;
@@ -20,6 +21,8 @@ namespace GoldenCrown
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IFinanceService, FinanceService>();
+
+            builder.Services.AddHostedService<SessionCleanupService>();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options=>
                 options.UseSqlServer(connectionString));
