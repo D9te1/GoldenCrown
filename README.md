@@ -171,40 +171,34 @@ GET /api/finance/history
 ### Tables
 
 #### users
-+----------+----------+--------------+
 | Column   | Type     | Constraints  |
-+----------+----------+--------------+
+|----------|----------|--------------|
 | id       | int      | PK, Identity |
 | login    | nvarchar | NOT NULL     |
 | name     | nvarchar | NOT NULL     |
 | password | nvarchar | NOT NULL     |
-+----------+----------+--------------+
 
 #### accounts
-+---------+---------------+--------------------------+
 | Column  | Type          | Constraints              |
-+---------+---------------+--------------------------+
+|---------|---------------|--------------------------|
 | id      | int           | PK, Identity             |
 | user_id | int           | NOT NULL, FK -> users.id |
 | balance | decimal(18,2) | NOT NULL                 |
-+---------+---------------+--------------------------+
+|---------|---------------|--------------------------|
 
 #### sessions
-+------------+----------+--------------------+
 | Column     | Type     | Constraints        |
-+------------+----------+--------------------+
+|------------|----------|--------------------|
 | user_id    | int      | PK, FK -> users.id |
 | token      | nvarchar | NOT NULL           |
 | expires_at | datetime | NOT NULL           |
-+------------+----------+--------------------+
+|------------|----------|--------------------|
 
 #### transactions
-+---------------------+---------------+-----------------------------+
 | Column              | Type          | Constraints                 |
-+---------------------+---------------+-----------------------------+
+|---------------------|---------------|-----------------------------|
 | id                  | int           | PK, Identity                |
 | sender_account_id   | int           | NOT NULL, FK -> accounts.id |
 | receiver_account_id | int           | NOT NULL, FK -> accounts.id |
 | created_at          | datetime      | NOT NULL                    |
 | amount              | decimal(18,2) | NOT NULL                    |
-+---------------------+---------------+-----------------------------+
