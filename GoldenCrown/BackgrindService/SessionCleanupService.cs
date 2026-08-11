@@ -31,7 +31,7 @@ namespace GoldenCrown.BackgriundService
 
                     if(deletedCount > 0)
                     {
-                        _logger.LogInformation("Removed sessionsй: {DeletedCount}", deletedCount);
+                        _logger.LogInformation("Removed sessions: {DeletedCount}", deletedCount);
                     }
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested){
