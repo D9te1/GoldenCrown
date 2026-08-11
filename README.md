@@ -184,7 +184,6 @@ GET /api/finance/history
 | id      | int           | PK, Identity             |
 | user_id | int           | NOT NULL, FK -> users.id |
 | balance | decimal(18,2) | NOT NULL                 |
-|---------|---------------|--------------------------|
 
 #### sessions
 | Column     | Type     | Constraints        |
@@ -192,7 +191,6 @@ GET /api/finance/history
 | user_id    | int      | PK, FK -> users.id |
 | token      | nvarchar | NOT NULL           |
 | expires_at | datetime | NOT NULL           |
-|------------|----------|--------------------|
 
 #### transactions
 | Column              | Type          | Constraints                 |
