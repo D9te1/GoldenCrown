@@ -12,65 +12,74 @@ namespace GoldenCrown
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        // Add services to the container.
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IAccountService, AccountService>();
-            builder.Services.AddScoped<IFinanceService, FinanceService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IAccountService, AccountService>();
+        builder.Services.AddScoped<IFinanceService, FinanceService>();
 
-            builder.Services.AddHostedService<SessionCleanupService>();
+        builder.Services.AddHostedService<SessionCleanupService>();
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options=>
-                options.UseSqlServer(connectionString));
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddSwaggerGen(c =>
+        builder.Services.AddDbContext<ApplicationDbContext>(options=>
+        options.UseSqlServer(connectionString));
+        builder.Services.AddControllers();
+        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.AddSecurityDefinition("ApiKey",
+        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        {
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Please enter into field your api token",
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+        });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
             {
-                c.AddSecurityDefinition("ApiKey",
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-            Description = "Please enter into field your api token",
-            Name = "Authorization",
-            Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
-            });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
+                new OpenApiSecurityScheme
                 {
-                    new OpenApiSecurityScheme
+                    Reference = new OpenApiReference
                     {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "ApiKey"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-            });
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "ApiKey"
+                    }
+                },
+                Array.Empty<string>()
             }
-            //dsvdgs
-            app.UseHttpsRedirection();
+        });
+        });
 
-            app.UseMiddleware<AuthorizationMiddleware>();
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+        //dsvdgs
+        app.UseHttpsRedirection();
+
+        app.UseMiddleware<AuthorizationMiddleware>();
 
 
-            app.MapControllers();
+        app.MapControllers();
 
-            app.Run();
+        MigrateDatabase(app);
+            
+        app.Run();
+        }
+
+        private static void MigrateDatabase(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Database.Migrate();
         }
     }
 }
